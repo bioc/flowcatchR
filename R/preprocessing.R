@@ -38,7 +38,7 @@ preprocess.Frames <- function(frames,
                               displayprocessing=FALSE,
                               ...) # for the single channel images/for one channel of multi-channel images
 {
-  if(frames@channel=="all")
+  if( frames@channel=="all" && frames@colormode==2L ) # it is ok on a grayscale Frames object
     stop("Please select a channel to work on, run channel.Frames on the Frames object you provided")
   
   flo = makeBrush(brush.size, brush.shape, step=FALSE)^2
@@ -79,6 +79,7 @@ particles <- function(raw.frames,
                       channel=NULL  
 )
 {
+  ## perform preliminary checks on the object(s)
   # if still storing all channels, select one
   if(raw.frames@channel == "all" && is.null(channel))
     stop("Please select one channel to work on. Choose one among 'red','green' and 'blue'")
@@ -113,6 +114,7 @@ particles <- function(raw.frames,
     imgFeatures <- as.data.frame(EBImage::computeFeatures(segmImg,rawImg,xname="cell"))
     imgFeatures$shapeFactor <- (imgFeatures$cell.0.s.perimeter)^2 / (4*pi*imgFeatures$cell.0.s.area)
     
+    ## keep maybe an additional if to see if these are available? TODO
     # with the locations now saved as names
     out[[dimnames(binary.frames)[[3]][i]]] <- imgFeatures
   }
